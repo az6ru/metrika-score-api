@@ -1,0 +1,213 @@
+INFO:     Will watch for changes in these directories: ['/home/aigig/projects/metrika-scrore-api']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [5736] using StatReload
+INFO:     Started server process [5791]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:37642 - "GET /tasks/f99fb3fd-0706-4b62-be6c-18a8ae362101/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:42018 - "POST /tasks HTTP/1.1" 202 Accepted
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] Старт расчёта для 2025-06-26
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] Старт расчёта за 2025-06-26, counter=92342184
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] POST visits logrequest ...
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits req_id=44409931
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] POST hits logrequest ...
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] hits req_id=44409932
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] Ожидание обработки visits ...
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+WARNING:  StatReload detected changes in 'fetch_level4_for_date.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for background tasks to complete. (CTRL+C to force quit)
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=created
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits status=processed
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] Ожидание обработки hits ...
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] hits status=processed
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] Скачивание visits ...
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] visits получено 659
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] Скачивание hits ...
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] hits получено 1,383
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] Чистка visits ...
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] Чистка hits ...
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] Формирование вспомогательных карт ...
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] Подготовка признаков ...
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] Таблица shape=(659, 14)
+INFO:metrika-api:[task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0] [metrika] Нет модели для desktop
+ERROR:metrika-api:Task f9ab30ee-32c1-4dc9-8768-018c94fcc2a0 failed: Нет модели для desktop
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [5791]
+INFO:     Started server process [7899]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:52000 - "GET /tasks/f9ab30ee-32c1-4dc9-8768-018c94fcc2a0/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58200 - "GET /tasks/f9ab30ee-32c1-4dc9-8768-018c94fcc2a0/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44944 - "GET /tasks/f9ab30ee-32c1-4dc9-8768-018c94fcc2a0/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58794 - "POST /tasks HTTP/1.1" 202 Accepted
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] Старт расчёта для 2025-06-26
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] Старт расчёта за 2025-06-26, counter=92342184
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] POST visits logrequest ...
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] visits req_id=44410078
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] POST hits logrequest ...
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] hits req_id=44410079
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] Ожидание обработки visits ...
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] visits status=created
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] visits status=created
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] visits status=created
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] visits status=created
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] visits status=created
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] visits status=created
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] visits status=processed
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] Ожидание обработки hits ...
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] hits status=processed
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] Скачивание visits ...
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] visits получено 659
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] Скачивание hits ...
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] hits получено 1,383
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] Чистка visits ...
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] Чистка hits ...
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] Формирование вспомогательных карт ...
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] Подготовка признаков ...
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] Таблица shape=(659, 14)
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] Применение модели level4_desktop_slot.joblib для desktop ...
+INFO:metrika-api:[task 0dcabd57-7a8d-401f-8100-f49389b6afec] [metrika] Нет модели для mobile
+ERROR:metrika-api:Task 0dcabd57-7a8d-401f-8100-f49389b6afec failed: Нет модели для mobile
+INFO:     127.0.0.1:35528 - "POST /tasks HTTP/1.1" 202 Accepted
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] Старт расчёта для 2025-06-26
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] Старт расчёта за 2025-06-26, counter=92342184
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] POST visits logrequest ...
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] visits req_id=44410106
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] POST hits logrequest ...
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] hits req_id=44410107
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] Ожидание обработки visits ...
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] visits status=created
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] visits status=created
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] visits status=created
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] visits status=created
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] visits status=processed
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] Ожидание обработки hits ...
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] hits status=processed
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] Скачивание visits ...
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] visits получено 659
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] Скачивание hits ...
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] hits получено 1,383
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] Чистка visits ...
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] Чистка hits ...
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] Формирование вспомогательных карт ...
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] Подготовка признаков ...
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] Таблица shape=(659, 14)
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] Применение модели level4_desktop_slot.joblib для desktop ...
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] Применение модели level4_mobile_slot.joblib для mobile ...
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] [metrika] Готово! Визитов 4+ = 36
+INFO:metrika-api:[task 1df7cce5-e1cc-4a44-a09f-a95f273c019d] Готово! Визитов 4+ = 36
+INFO:     127.0.0.1:35200 - "GET /tasks/1df7cce5-e1cc-4a44-a09f-a95f273c019d/result HTTP/1.1" 200 OK
+WARNING:  StatReload detected changes in 'test_api.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [7899]
+INFO:     Started server process [15425]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:60810 - "POST /tasks HTTP/1.1" 202 Accepted
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] Старт расчёта для 2025-06-26
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] Старт расчёта за 2025-06-26, counter=92342184
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] POST visits logrequest ...
+INFO:     127.0.0.1:60826 - "GET /tasks/2419c0bb-100e-47c4-ab31-4bbe953fb882/status HTTP/1.1" 200 OK
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] visits req_id=44410161
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] POST hits logrequest ...
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] hits req_id=44410162
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] Ожидание обработки visits ...
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] visits status=created
+INFO:     127.0.0.1:60834 - "GET /tasks/2419c0bb-100e-47c4-ab31-4bbe953fb882/status HTTP/1.1" 200 OK
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] visits status=created
+INFO:     127.0.0.1:41768 - "GET /tasks/2419c0bb-100e-47c4-ab31-4bbe953fb882/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:41772 - "GET /tasks/2419c0bb-100e-47c4-ab31-4bbe953fb882/status HTTP/1.1" 200 OK
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] visits status=created
+WARNING:  StatReload detected changes in 'test_api.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for background tasks to complete. (CTRL+C to force quit)
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] visits status=created
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] visits status=created
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] visits status=created
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] visits status=processed
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] Ожидание обработки hits ...
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] hits status=processed
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] Скачивание visits ...
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] visits получено 659
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] Скачивание hits ...
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] hits получено 1,383
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] Чистка visits ...
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] Чистка hits ...
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] Формирование вспомогательных карт ...
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] Подготовка признаков ...
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] Таблица shape=(659, 14)
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] Применение модели level4_desktop_slot.joblib для desktop ...
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] Применение модели level4_mobile_slot.joblib для mobile ...
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] [metrika] Готово! Визитов 4+ = 36
+INFO:metrika-api:[task 2419c0bb-100e-47c4-ab31-4bbe953fb882] Готово! Визитов 4+ = 36
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [15425]
+INFO:     Started server process [15794]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:50564 - "GET /tasks/2419c0bb-100e-47c4-ab31-4bbe953fb882/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56718 - "GET /tasks/2419c0bb-100e-47c4-ab31-4bbe953fb882/result HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51864 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51864 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51864 - "GET / HTTP/1.1" 404 Not Found
+INFO:     127.0.0.1:51874 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51874 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:33410 - "POST /tasks HTTP/1.1" 202 Accepted
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] Старт расчёта для 2025-06-20
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] Старт расчёта за 2025-06-20, counter=92342184
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] POST visits logrequest ...
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] visits req_id=44410176
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] POST hits logrequest ...
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] hits req_id=44410177
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] Ожидание обработки visits ...
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] visits status=created
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] visits status=created
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] visits status=created
+INFO:     127.0.0.1:51726 - "GET /tasks/7a16f720-06dd-4691-ad73-c0d3049a5465/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56470 - "GET /tasks/7a16f720-06dd-4691-ad73-c0d3049a5465/status HTTP/1.1" 200 OK
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] visits status=created
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] visits status=processed
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] Ожидание обработки hits ...
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] hits status=processed
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] Скачивание visits ...
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] visits получено 937
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] Скачивание hits ...
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] hits получено 2,036
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] Чистка visits ...
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] Чистка hits ...
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] Формирование вспомогательных карт ...
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] Подготовка признаков ...
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] Таблица shape=(937, 14)
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] Применение модели level4_desktop_slot.joblib для desktop ...
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] Применение модели level4_mobile_slot.joblib для mobile ...
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] [metrika] Готово! Визитов 4+ = 40
+INFO:metrika-api:[task 7a16f720-06dd-4691-ad73-c0d3049a5465] Готово! Визитов 4+ = 40
+INFO:     127.0.0.1:52272 - "GET /tasks/7a16f720-06dd-4691-ad73-c0d3049a5465/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:44048 - "GET /tasks/7a16f720-06dd-4691-ad73-c0d3049a5465/result HTTP/1.1" 200 OK
