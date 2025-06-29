@@ -1,0 +1,10 @@
+# Исключаем ненужное
+__pycache__/
+.git
+.venv
+*.pytest_cache/
+.cursor/
+*.log
+supabase/migrations/
+# Виртуальная среда пользователя
+venv/ 

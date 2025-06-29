@@ -145,12 +145,29 @@ def calculate_level4_visits(date: str, token: str, counter: int, logger=print) -
     logger(f"[metrika] Таблица shape={df.shape}")
     rule_mask = (df["visitDuration"] >= 180) & (df["pageViews"] >= 5) & (df["slots"] >= 5)
     pred_high = pd.Series(rule_mask, dtype=bool)
-    thresholds = json.loads(Path("level4_thresholds.json").read_text()) if Path("level4_thresholds.json").exists() else {"desktop": 0.48, "mobile": 0.36}
+    thresholds_path_candidates = [Path("ML/level4_thresholds.json"), Path("level4_thresholds.json")]
+    thresholds = None
+    for tp in thresholds_path_candidates:
+        if tp.exists():
+            thresholds = json.loads(tp.read_text())
+            break
+    if thresholds is None:
+        thresholds = {"desktop": 0.48, "mobile": 0.36}
+
+    # ищем модель сразу в нескольких директориях (ML/ и корень)
     for code, name in [(1, "desktop"), (2, "mobile")]:
         idx = df[(df["device"] == code) & (~rule_mask)].index
         if idx.empty:
             continue
-        for cand in [f"level4_{name}_slot_enhanced.joblib", f"level4_{name}_slot.joblib", f"level4_{name}.joblib"]:
+        model_candidates = [
+            f"ML/level4_{name}_slot_enhanced.joblib",
+            f"ML/level4_{name}_slot.joblib",
+            f"ML/level4_{name}.joblib",
+            f"level4_{name}_slot_enhanced.joblib",
+            f"level4_{name}_slot.joblib",
+            f"level4_{name}.joblib",
+        ]
+        for cand in model_candidates:
             if Path(cand).exists():
                 model_path = cand
                 break

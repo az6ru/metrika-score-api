@@ -1,0 +1,9 @@
+# Временные и чувствительные файлы
+.api_pid
+.env
+token.txt
+api.log
+
+# Кэш и служебные папки
+__pycache__/
+.cursor/ 
