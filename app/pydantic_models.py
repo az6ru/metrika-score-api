@@ -102,4 +102,84 @@ class ConversionStatusResponse(BaseModel):
     status: str
     errors: Optional[List[str]] = None
     processed: Optional[int] = None
-    total: Optional[int] = None 
+    total: Optional[int] = None
+
+# Модели для вебхуков офлайн-конверсий
+class OfflineConversionItem(BaseModel):
+    """Модель для одной офлайн-конверсии"""
+    client_id: Optional[str] = None
+    user_id: Optional[str] = None
+    yclid: Optional[str] = None
+    purchase_id: Optional[str] = None
+    target: str
+    date_time: datetime
+    price: Optional[float] = None
+    currency: Optional[str] = None
+    
+    @field_validator('client_id', 'user_id', 'yclid', 'purchase_id', pre=True)
+    @classmethod
+    def check_identifiers(cls, v, values, **kwargs):
+        """Проверяет, что указан только один из идентификаторов"""
+        # Получаем имя поля из kwargs для pydantic v1 или из info для v2
+        field_name = None
+        if 'field' in kwargs:
+            field_name = kwargs['field'].name  # pydantic v1
+        else:
+            # Пробуем получить из контекста для pydantic v2
+            try:
+                field_name = kwargs.get('info').field_name
+            except (AttributeError, KeyError):
+                pass
+        
+        # Проверяем только для последнего поля из четырех
+        if field_name == 'purchase_id':
+            # Подсчитываем количество заполненных идентификаторов
+            filled_ids = sum(1 for id_field in ['client_id', 'user_id', 'yclid', 'purchase_id'] 
+                            if values.get(id_field) is not None)
+            
+            # Проверяем, что заполнен хотя бы один идентификатор
+            if filled_ids == 0:
+                raise ValueError("Должен быть указан хотя бы один из идентификаторов: client_id, user_id, yclid или purchase_id")
+            
+            # Проверяем, что заполнен только один идентификатор
+            if filled_ids > 1:
+                raise ValueError("Должен быть указан только один из идентификаторов: client_id, user_id, yclid или purchase_id")
+                
+        return v
+
+class OfflineConversionWebhookRequest(BaseModel):
+    """Модель для запроса вебхука офлайн-конверсий"""
+    conversions: List[OfflineConversionItem]
+
+class WebhookCreateRequest(BaseModel):
+    """Модель для создания нового вебхука"""
+    name: str
+    counter_id: int
+    token: str
+    description: Optional[str] = None
+
+class WebhookCreateResponse(BaseModel):
+    """Модель ответа при создании вебхука"""
+    webhook_id: str
+    secret: str
+    url: str
+
+class OfflineConversionWebhookResponse(BaseModel):
+    """Модель ответа на запрос вебхука"""
+    batch_id: str
+    status: str
+    accepted_count: int
+    errors: Optional[List[str]] = None
+
+class OfflineConversionStatusResponse(BaseModel):
+    """Модель для статуса загрузки офлайн-конверсий"""
+    batch_id: str
+    status: str
+    webhook_id: str
+    counter_id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+    metrika_upload_id: Optional[str] = None
+    total: int
+    processed: int
+    errors: Optional[List[str]] = None 

@@ -206,6 +206,85 @@ curl http://localhost:8000/tasks/<task_id>/conversions
 ]
 ```
 
+### Вебхуки для офлайн-конверсий
+
+API предоставляет возможность приема офлайн-конверсий через вебхуки:
+
+#### 1. Создать новый вебхук
+```bash
+curl -X POST http://localhost:8000/webhook/offline-conversions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "CRM System",
+    "counter_id": 123456,
+    "token": "<TOKEN>",
+    "description": "Webhook for CRM system"
+  }'
+```
+Ответ:
+```json
+{
+  "webhook_id": "550e8400-e29b-41d4-a716-446655440000",
+  "secret": "KzBWYXzDPrfzv3LpUhWBqNX8JQnbGc_wEKUzUhM7uyA",
+  "url": "https://api.example.com/webhook/offline-conversions/550e8400-e29b-41d4-a716-446655440000"
+}
+```
+
+#### 2. Отправить конверсии через вебхук
+```bash
+curl -X POST http://localhost:8000/webhook/offline-conversions/550e8400-e29b-41d4-a716-446655440000 \
+  -H "Content-Type: application/json" \
+  -H "X-Webhook-Secret: KzBWYXzDPrfzv3LpUhWBqNX8JQnbGc_wEKUzUhM7uyA" \
+  -d '{
+    "conversions": [
+      {
+        "client_id": "1234567890.1234567890",
+        "target": "purchase",
+        "date_time": "2025-07-01T12:34:56",
+        "price": 1500,
+        "currency": "RUB",
+        "purchase_id": "order123"
+      },
+      {
+        "user_id": "user123",
+        "target": "registration",
+        "date_time": "2025-07-01T12:30:00"
+      }
+    ]
+  }'
+```
+Ответ:
+```json
+{
+  "batch_id": "550e8400-e29b-41d4-a716-446655440001",
+  "status": "accepted",
+  "accepted_count": 2
+}
+```
+
+#### 3. Проверить статус загрузки конверсий через вебхук
+```bash
+curl "http://localhost:8000/webhook/offline-conversions/550e8400-e29b-41d4-a716-446655440000/status?batch_id=550e8400-e29b-41d4-a716-446655440001" \
+  -H "X-Webhook-Secret: KzBWYXzDPrfzv3LpUhWBqNX8JQnbGc_wEKUzUhM7uyA"
+```
+Ответ:
+```json
+{
+  "batch_id": "550e8400-e29b-41d4-a716-446655440001",
+  "status": "completed",
+  "webhook_id": "550e8400-e29b-41d4-a716-446655440000",
+  "counter_id": 123456,
+  "created_at": "2025-07-01T12:35:00Z",
+  "updated_at": "2025-07-01T12:36:30Z",
+  "metrika_upload_id": "987654",
+  "total": 2,
+  "processed": 2,
+  "errors": null
+}
+```
+
+Подробная документация по работе с вебхуками доступна в [docs/WebhookOfflineConversions.md](docs/WebhookOfflineConversions.md).
+
 ### Примеры ошибок
 
 - 400: Не передан обязательный параметр

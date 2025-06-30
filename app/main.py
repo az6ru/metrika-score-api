@@ -1,4 +1,4 @@
-from fastapi import FastAPI, BackgroundTasks, HTTPException, Request, Query
+from fastapi import FastAPI, BackgroundTasks, HTTPException, Request, Query, Header, Depends
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 from typing import Optional, List, Dict, Any
@@ -16,16 +16,76 @@ from app.send_conversions import send_conversions_to_metrika, check_conversion_s
 from contextlib import asynccontextmanager
 from app.pydantic_models import TaskRequest, TaskResponse, TaskStatusResponse, VisitResult, PaginatedVisitResults
 from app.pydantic_models import BulkConversionRequest, SingleConversionRequest, ConversionResponse, ConversionStatusResponse
+from app.pydantic_models import WebhookCreateRequest, WebhookCreateResponse, OfflineConversionWebhookRequest, OfflineConversionWebhookResponse, OfflineConversionStatusResponse
+from app.supabase_db import create_webhook, get_webhook, save_webhook_conversions, get_webhook_batch, update_webhook_batch_status
+from app.send_webhook_conversions import process_webhook_batch, check_webhook_batch_status
 
 # --- Логирование ---
-logging.basicConfig(level=logging.INFO)
+# Настройка логирования в файл и консоль
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler("api.log"),
+        logging.StreamHandler()
+    ]
+)
 logger = logging.getLogger("metrika-api")
 
+# --- Настройки API ---
+API_BASE_URL = os.environ.get("API_BASE_URL", "http://0.0.0.0:8000")
+
+# --- Middleware для логирования запросов и ответов ---
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     yield
 
-app = FastAPI(title="Metrika Score API", version="1.0.0", lifespan=lifespan)
+# Middleware для логирования запросов и ответов
+async def log_request_middleware(request: Request, call_next):
+    # Логируем входящий запрос
+    request_id = str(uuid4())
+    logger.info(f"Request [{request_id}]: {request.method} {request.url.path}")
+    
+    # Пытаемся логировать тело запроса для POST/PUT запросов
+    if request.method in ["POST", "PUT"]:
+        try:
+            body = await request.body()
+            if body:
+                # Ограничиваем размер логируемого тела запроса
+                body_str = body.decode('utf-8')
+                if len(body_str) > 1000:
+                    body_str = body_str[:1000] + "... [truncated]"
+                logger.info(f"Request body [{request_id}]: {body_str}")
+                # Восстанавливаем тело запроса, чтобы его можно было прочитать снова
+                await request._body_reset()
+        except Exception as e:
+            logger.warning(f"Failed to log request body [{request_id}]: {str(e)}")
+    
+    # Обрабатываем запрос
+    response = await call_next(request)
+    
+    # Логируем ответ
+    logger.info(f"Response [{request_id}]: {response.status_code}")
+    
+    return response
+
+app = FastAPI(
+    title="Metrika Score API", 
+    version="1.0.0", 
+    lifespan=lifespan,
+    description="""
+    API для работы с Яндекс.Метрикой:
+    
+    1. Расчет скоринга визитов на основе ML-моделей
+    2. Отправка конверсий в Яндекс.Метрику (скоринговые и одиночные)
+    3. Прием офлайн-конверсий через вебхуки
+    
+    Документация по API Яндекс.Метрики: https://yandex.ru/dev/metrika/doc/api2/
+    """
+)
+
+# Добавляем middleware для логирования
+app.middleware("http")(log_request_middleware)
 
 # --- Совместимость pydantic v1/v2 ---
 try:
@@ -403,3 +463,184 @@ async def check_conversion_upload_status(
             
         # Ждем перед следующей попыткой
         await asyncio.sleep(delay_seconds) 
+
+# --- Эндпоинты для работы с вебхуками офлайн-конверсий ---
+
+@app.post(
+    "/webhook/offline-conversions",
+    response_model=WebhookCreateResponse,
+    summary="Создать новый вебхук для офлайн-конверсий",
+    description="""
+    Создает новый вебхук для приема офлайн-конверсий.
+    
+    - Генерирует уникальный идентификатор вебхука и секретный ключ
+    - Сохраняет информацию о вебхуке в базе данных
+    - Возвращает URL для отправки конверсий и секретный ключ
+    
+    Полученный URL можно использовать для настройки вебхука в вашей системе.
+    Секретный ключ необходимо передавать в заголовке X-Webhook-Secret при отправке конверсий.
+    """
+)
+async def create_offline_conversion_webhook(req: WebhookCreateRequest):
+    """Создает новый вебхук для офлайн-конверсий"""
+    try:
+        # Создаем вебхук
+        webhook_data = await create_webhook(
+            name=req.name,
+            counter_id=req.counter_id,
+            token=req.token,
+            description=req.description
+        )
+        
+        return WebhookCreateResponse(
+            webhook_id=webhook_data["webhook_id"],
+            secret=webhook_data["secret"],
+            url=webhook_data["url"]
+        )
+    except Exception as e:
+        logger.error(f"Error creating webhook: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error creating webhook: {str(e)}")
+
+async def verify_webhook_secret(webhook_id: str, x_webhook_secret: str = Header(None)):
+    """
+    Проверяет секретный ключ вебхука.
+    
+    Args:
+        webhook_id: ID вебхука
+        x_webhook_secret: Секретный ключ из заголовка
+        
+    Returns:
+        Информация о вебхуке
+    """
+    # Получаем информацию о вебхуке
+    webhook = await get_webhook(webhook_id)
+    if not webhook:
+        raise HTTPException(status_code=404, detail="Webhook not found")
+    
+    # Проверяем активность вебхука
+    if not webhook.get("is_active", True):
+        raise HTTPException(status_code=403, detail="Webhook is disabled")
+    
+    # Проверяем секретный ключ
+    if not x_webhook_secret:
+        raise HTTPException(status_code=401, detail="X-Webhook-Secret header is required")
+    
+    if webhook["secret"] != x_webhook_secret:
+        raise HTTPException(status_code=403, detail="Invalid webhook secret")
+    
+    return webhook
+
+@app.post(
+    "/webhook/offline-conversions/{webhook_id}",
+    response_model=OfflineConversionWebhookResponse,
+    summary="Приём офлайн-конверсий через вебхук",
+    description="""
+    Принимает офлайн-конверсии через вебхук и отправляет их в Яндекс.Метрику.
+    
+    - Проверяет секретный ключ вебхука в заголовке X-Webhook-Secret
+    - Валидирует входящие данные
+    - Сохраняет конверсии в базе данных
+    - Запускает фоновую задачу для отправки конверсий в Яндекс.Метрику
+    
+    Для проверки статуса отправки используйте эндпоинт `/webhook/offline-conversions/{webhook_id}/status?batch_id={batch_id}`
+    """
+)
+async def receive_offline_conversions(
+    webhook_id: str, 
+    req: OfflineConversionWebhookRequest, 
+    background_tasks: BackgroundTasks,
+    webhook: dict = Depends(verify_webhook_secret)
+):
+    """Принимает офлайн-конверсии через вебхук"""
+    try:
+        # Проверяем наличие конверсий
+        if not req.conversions:
+            raise HTTPException(status_code=400, detail="No conversions provided")
+        
+        # Сохраняем конверсии
+        batch_id = await save_webhook_conversions(webhook_id, [conv.dict() for conv in req.conversions])
+        
+        # Запускаем фоновую задачу для отправки конверсий
+        background_tasks.add_task(process_webhook_batch, batch_id)
+        
+        return OfflineConversionWebhookResponse(
+            batch_id=batch_id,
+            status="accepted",
+            accepted_count=len(req.conversions)
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error processing webhook conversions: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error processing webhook conversions: {str(e)}")
+
+@app.get(
+    "/webhook/offline-conversions/{webhook_id}/status",
+    response_model=OfflineConversionStatusResponse,
+    summary="Получить статус загрузки офлайн-конверсий",
+    description="""
+    Проверяет статус загрузки офлайн-конверсий, отправленных через вебхук.
+    
+    - Проверяет секретный ключ вебхука в заголовке X-Webhook-Secret
+    - Получает информацию о пакете конверсий
+    - Если пакет в статусе "uploaded", проверяет статус загрузки в Яндекс.Метрике
+    
+    Параметры:
+    - batch_id: ID пакета конверсий (обязательный)
+    """
+)
+async def get_offline_conversion_status(
+    webhook_id: str, 
+    batch_id: str = Query(..., description="ID пакета конверсий"),
+    webhook: dict = Depends(verify_webhook_secret)
+):
+    """Получает статус загрузки офлайн-конверсий"""
+    try:
+        # Получаем информацию о пакете
+        batch = await get_webhook_batch(batch_id)
+        if not batch:
+            raise HTTPException(status_code=404, detail="Batch not found")
+        
+        # Проверяем, что пакет принадлежит указанному вебхуку
+        if batch["webhook_id"] != webhook_id:
+            raise HTTPException(status_code=403, detail="Batch does not belong to this webhook")
+        
+        # Если пакет в статусе "uploaded", проверяем статус в Метрике
+        if batch["status"] == "uploaded" and batch.get("metrika_upload_id"):
+            status_info = await check_webhook_batch_status(batch_id)
+        else:
+            status_info = {
+                "status": batch["status"],
+                "processed": batch.get("processed", 0),
+                "total": batch.get("total", 0),
+                "errors": batch.get("errors", [])
+            }
+        
+        return OfflineConversionStatusResponse(
+            batch_id=batch_id,
+            status=status_info["status"],
+            webhook_id=webhook_id,
+            counter_id=batch["counter_id"],
+            created_at=datetime.fromisoformat(batch["created_at"]) if isinstance(batch["created_at"], str) else batch["created_at"],
+            updated_at=datetime.fromisoformat(batch["updated_at"]) if isinstance(batch["updated_at"], str) else batch["updated_at"],
+            metrika_upload_id=batch.get("metrika_upload_id"),
+            total=batch.get("total", 0),
+            processed=status_info.get("processed", 0),
+            errors=status_info.get("errors", [])
+        )
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting webhook batch status: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error getting webhook batch status: {str(e)}")
+
+# --- Фоновые задачи для вебхуков ---
+
+async def process_webhook_batches():
+    """
+    Фоновая задача для обработки пакетов конверсий из вебхуков.
+    
+    Запускается периодически и обрабатывает все пакеты в статусе "pending".
+    """
+    # TODO: Реализовать периодическую обработку пакетов 
+    pass 

@@ -10,12 +10,19 @@ import logging
 load_dotenv()
 
 # --- OFFLINE / TEST MODE ---
-OFFLINE = bool(os.environ.get("OFFLINE_TEST")) or bool(os.environ.get("PYTEST_CURRENT_TEST"))
+# Установите OFFLINE = False для реальной отправки данных в Яндекс.Метрику
+# При OFFLINE = True данные не будут отправляться в Метрику, а будут храниться только в памяти
+OFFLINE = False  # Изменено с True на False для реальной отправки
 
 # Простое хранилище в памяти для офлайн-режима
 _tasks_mem: Dict[str, Dict[str, Any]] = {}
 _results_mem: Dict[str, Any] = {}
 _conversions_mem: Dict[str, Dict[str, Any]] = {}  # Хранилище для конверсий
+
+# --- Функции для работы с вебхуками офлайн-конверсий ---
+
+_webhooks_mem: Dict[str, Dict[str, Any]] = {}  # Хранилище для вебхуков в офлайн-режиме
+_webhook_conversions_mem: Dict[str, List[Dict[str, Any]]] = defaultdict(list)  # Хранилище для конверсий через вебхук
 
 if OFFLINE:
     # Заглушка вместо real Supabase Client
@@ -291,4 +298,256 @@ async def get_conversions_by_task(task_id: str) -> List[Dict[str, Any]]:
     except APIError as e:
         logger = logging.getLogger("metrika-api")
         logger.error(f"get_conversions_by_task APIError: {str(e)}")
+        return []
+
+# --- Функции для работы с вебхуками офлайн-конверсий ---
+
+async def create_webhook(name: str, counter_id: int, token: str, description: Optional[str] = None) -> Dict[str, str]:
+    """
+    Создает новый вебхук для офлайн-конверсий.
+    
+    Args:
+        name: Название вебхука
+        counter_id: ID счетчика Яндекс.Метрики
+        token: OAuth-токен
+        description: Описание вебхука
+        
+    Returns:
+        Информация о созданном вебхуке
+    """
+    import uuid
+    import secrets
+    from datetime import datetime
+    
+    webhook_id = str(uuid.uuid4())
+    # Генерируем секретный ключ для аутентификации вебхука
+    secret = secrets.token_urlsafe(32)
+    
+    data = {
+        "id": webhook_id,
+        "name": name,
+        "counter_id": counter_id,
+        "token": token,
+        "description": description,
+        "secret": secret,
+        "created_at": datetime.utcnow().isoformat(),
+        "updated_at": datetime.utcnow().isoformat(),
+        "is_active": True
+    }
+    
+    loop = asyncio.get_event_loop()
+    try:
+        if OFFLINE:
+            _webhooks_mem[webhook_id] = data
+        else:
+            await loop.run_in_executor(None, lambda: supabase.table("webhooks").insert(data).execute())
+        
+        # Импортируем API_BASE_URL из main.py
+        from app.main import API_BASE_URL
+        
+        # Формируем URL для вебхука
+        webhook_url = f"{API_BASE_URL}/webhook/offline-conversions/{webhook_id}"
+        
+        return {
+            "webhook_id": webhook_id,
+            "secret": secret,
+            "url": webhook_url
+        }
+    except APIError as e:
+        logger = logging.getLogger("metrika-api")
+        logger.error(f"create_webhook APIError: {str(e)}")
+        raise Exception(str(e))
+
+async def get_webhook(webhook_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Получает информацию о вебхуке.
+    
+    Args:
+        webhook_id: ID вебхука
+        
+    Returns:
+        Информация о вебхуке или None, если вебхук не найден
+    """
+    if OFFLINE:
+        return _webhooks_mem.get(webhook_id)
+    
+    loop = asyncio.get_event_loop()
+    try:
+        resp = await loop.run_in_executor(None, lambda: supabase.table("webhooks").select("*").eq("id", webhook_id).execute())
+        if resp.data and len(resp.data) > 0:
+            return resp.data[0]
+        return None
+    except APIError as e:
+        logger = logging.getLogger("metrika-api")
+        logger.error(f"get_webhook APIError: {str(e)}")
+        return None
+
+async def save_webhook_conversions(webhook_id: str, conversions: List[Dict[str, Any]]) -> str:
+    """
+    Сохраняет конверсии, полученные через вебхук.
+    
+    Args:
+        webhook_id: ID вебхука
+        conversions: Список конверсий
+        
+    Returns:
+        ID пакета конверсий
+    """
+    import uuid
+    from datetime import datetime
+    
+    # Получаем информацию о вебхуке
+    webhook = await get_webhook(webhook_id)
+    if not webhook:
+        raise Exception(f"Webhook {webhook_id} not found")
+    
+    batch_id = str(uuid.uuid4())
+    
+    # Подготавливаем данные для сохранения
+    batch_data = {
+        "id": batch_id,
+        "webhook_id": webhook_id,
+        "counter_id": webhook["counter_id"],
+        "status": "pending",
+        "created_at": datetime.utcnow().isoformat(),
+        "updated_at": datetime.utcnow().isoformat(),
+        "total": len(conversions),
+        "processed": 0,
+        "metrika_upload_id": None,
+        "errors": None
+    }
+    
+    # Подготавливаем данные конверсий
+    conversion_items = []
+    for i, conv in enumerate(conversions):
+        conversion_items.append({
+            "id": str(uuid.uuid4()),
+            "batch_id": batch_id,
+            "client_id": conv.get("client_id"),
+            "user_id": conv.get("user_id"),
+            "yclid": conv.get("yclid"),
+            "purchase_id": conv.get("purchase_id"),
+            "target": conv["target"],
+            "date_time": conv["date_time"].isoformat() if isinstance(conv["date_time"], datetime) else conv["date_time"],
+            "price": conv.get("price"),
+            "currency": conv.get("currency"),
+            "status": "pending",
+            "created_at": datetime.utcnow().isoformat(),
+            "updated_at": datetime.utcnow().isoformat(),
+            "error": None
+        })
+    
+    loop = asyncio.get_event_loop()
+    try:
+        if OFFLINE:
+            _webhook_conversions_mem[batch_id] = conversion_items
+            # Сохраняем информацию о пакете
+            _conversions_mem[batch_id] = batch_data
+        else:
+            # Сначала сохраняем информацию о пакете
+            data = await loop.run_in_executor(
+                None, 
+                lambda: supabase.table("webhook_batches").insert(batch_data).execute()
+            )
+            
+            if not data.data:
+                raise Exception("Failed to create batch")
+            
+            # Затем сохраняем конверсии
+            await loop.run_in_executor(
+                None, 
+                lambda: supabase.table("webhook_conversions").insert(conversion_items).execute()
+            )
+        
+        return batch_id
+    except APIError as e:
+        logger = logging.getLogger("metrika-api")
+        logger.error(f"save_webhook_conversions APIError: {str(e)}")
+        raise Exception(str(e))
+
+async def update_webhook_batch_status(batch_id: str, status: str, metrika_upload_id: Optional[str] = None, processed: Optional[int] = None, errors: Optional[List[str]] = None) -> None:
+    """
+    Обновляет статус пакета конверсий.
+    
+    Args:
+        batch_id: ID пакета
+        status: Новый статус
+        metrika_upload_id: ID загрузки в Яндекс.Метрике
+        processed: Количество обработанных конверсий
+        errors: Список ошибок
+    """
+    from datetime import datetime
+    
+    data = {
+        "status": status,
+        "updated_at": datetime.utcnow().isoformat(),
+    }
+    
+    if metrika_upload_id is not None:
+        data["metrika_upload_id"] = metrika_upload_id
+    
+    if processed is not None:
+        data["processed"] = processed
+    
+    if errors is not None:
+        data["errors"] = errors
+    
+    loop = asyncio.get_event_loop()
+    try:
+        if OFFLINE:
+            if batch_id in _conversions_mem:
+                _conversions_mem[batch_id].update(data)
+        else:
+            await loop.run_in_executor(None, lambda: supabase.table("webhook_batches").update(data).eq("id", batch_id).execute())
+    except APIError as e:
+        logger = logging.getLogger("metrika-api")
+        logger.error(f"update_webhook_batch_status APIError: {str(e)}")
+        raise Exception(str(e))
+
+async def get_webhook_batch(batch_id: str) -> Optional[Dict[str, Any]]:
+    """
+    Получает информацию о пакете конверсий.
+    
+    Args:
+        batch_id: ID пакета
+        
+    Returns:
+        Информация о пакете или None, если пакет не найден
+    """
+    if OFFLINE:
+        return _conversions_mem.get(batch_id)
+    
+    loop = asyncio.get_event_loop()
+    try:
+        # Выполняем простой запрос без вложенных ресурсов
+        resp = await loop.run_in_executor(None, lambda: supabase.table("webhook_batches").select("*").eq("id", batch_id).execute())
+        if resp.data and len(resp.data) > 0:
+            return resp.data[0]
+        return None
+    except APIError as e:
+        logger = logging.getLogger("metrika-api")
+        logger.error(f"get_webhook_batch APIError: {str(e)}")
+        return None
+
+async def get_webhook_conversions(batch_id: str) -> List[Dict[str, Any]]:
+    """
+    Получает конверсии из пакета.
+    
+    Args:
+        batch_id: ID пакета
+        
+    Returns:
+        Список конверсий
+    """
+    if OFFLINE:
+        return _webhook_conversions_mem.get(batch_id, [])
+    
+    loop = asyncio.get_event_loop()
+    try:
+        # Используем filter вместо eq
+        resp = await loop.run_in_executor(None, lambda: supabase.table("webhook_conversions").select("*").filter("batch_id", "eq", batch_id).execute())
+        return resp.data or []
+    except APIError as e:
+        logger = logging.getLogger("metrika-api")
+        logger.error(f"get_webhook_conversions APIError: {str(e)}")
         return [] 
