@@ -1,0 +1,32 @@
+# Исключаем большие или среду-зависимые файлы, не нужные в образе
+
+# — Логи
+*.log
+
+# — Файлы результатов и временные JSON/CSV
+result.*
+metrika_logrequests.json
+curl_create_task.log
+
+# — База данных
+*.db
+
+# — ML-модели (монтируются на рантайме при необходимости)
+level4_*_slot*.joblib
+level4_*.joblib
+
+# — Прочие артефакты / кеши
+__pycache__/
+*.py[cod]
+*.pyd
+*.pyo
+*.so
+
+# — Git и средовые файлы
+.git/
+*.env
+*.venv
+
+# — IDE/Editor
+.vscode/
+.idea/ 
