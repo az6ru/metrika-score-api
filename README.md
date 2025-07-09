@@ -51,5 +51,26 @@ python fetch_level4_for_date.py --date 2025-07-01 --token <TOKEN> --counter <ID>
 - Для работы нужны обученные модели (`level4_desktop_slot*.joblib`, `level4_mobile_slot*.joblib`) и файл порогов `level4_thresholds.json` в той же папке.
 - Скрипт не требует ручной подготовки данных — всё скачивает и обрабатывает автоматически.
 
+## Деплой через Docker
+
+```bash
+# Сборка образа
+docker build -t metrika-score-api .
+
+# Запуск контейнера
+# Параметры workers можно изменить при необходимости
+docker run -d -p 8000:8000 --name metrika-api metrika-score-api
+```
+
+Контейнер автоматически запускает `uvicorn` с 4 воркерами. При необходимости можно указать переменные окружения или аргументы запуска, например:
+
+```bash
+docker run -d -p 8000:8000 \
+  -e UVICORN_WORKERS=2 \
+  metrika-score-api uvicorn main:app --host 0.0.0.0 --port 8000 --workers 2
+```
+
+После запуска API будет доступно по `http://localhost:8000`.
+
 ---
 Автор: [ваше имя] 

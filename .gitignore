@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Logs
+*.log
+
+# Results and temp
+result.json
+curl_create_task.log
+metrika_logrequests.json
+metrika_tasks.db
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Ignore everything except source, models, requirements, README, test_api.py
+!README.md
+!main.py
+!db.py
+!fetch_level4_for_date.py
+!requirements.txt
+!test_api.py
+!level4_desktop_slot.joblib
+!level4_mobile_slot.joblib 
